@@ -1,0 +1,33 @@
+  root@debian:~# less /sys/kernel/debug/tracing/trace
+# tracer: function
+#
+# entries-in-buffer/entries-written: 4819/4819   #P:8
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+            bash-610   [001] ....   869.093337: pl011_tx_empty <-uart_wait_until_sent
+            bash-610   [001] ....   869.093414: pl011_read <-pl011_tx_empty
+            bash-610   [001] d...   869.095551: pl011_start_tx <-__uart_start.isra.1
+            bash-610   [001] d...   869.095602: pl011_start_tx_pio <-pl011_start_tx
+            bash-610   [001] d...   869.095649: pl011_tx_chars <-pl011_start_tx_pio
+            bash-610   [001] d...   869.095687: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095696: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095724: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095729: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095740: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095745: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095755: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095760: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095770: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095774: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095784: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095789: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095799: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095803: pl011_read <-pl011_tx_char
+            bash-610   [001] d...   869.095813: pl011_tx_char <-pl011_tx_chars
+            bash-610   [001] d...   869.095817: pl011_read <-pl011_tx_char
