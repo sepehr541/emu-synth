@@ -3,7 +3,9 @@ module Synthesizer (
   measureMultipleRuns
                    ) where
 
+import Control.DeepSeq (deepseq)
 import System.Clock (Clock(Monotonic), getTime, diffTimeSpec, toNanoSecs)
+import System.TimeIt(timeItT)
 import Control.Monad (replicateM)
 import Control.Monad.State hiding (state)
 import Data.List (find)
@@ -55,15 +57,13 @@ runExample :: Int -> PL011Example -> Maybe [Action]
 runExample = findSatisfyingSequence . (generateActionSequences pl011Actions)
 
 
-measureExecutionTime :: Int -> PL011Example -> IO Integer
+measureExecutionTime :: Int -> PL011Example -> IO Double
 measureExecutionTime depth example = do
-    start <- getTime Monotonic
-    let result =  runExample depth example
-    end <- getTime Monotonic
-    return $ toNanoSecs (diffTimeSpec end start)
+    (time, result) <- timeItT $ return $! (runExample depth example)
+    return time
 
 
-measureMultipleRuns :: Int -> Int -> PL011Example -> IO [Integer]
+measureMultipleRuns :: Int -> Int -> PL011Example -> IO [Double]
 measureMultipleRuns runs d e = replicateM runs (measureExecutionTime d e) 
 
 

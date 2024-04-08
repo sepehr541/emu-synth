@@ -24,6 +24,8 @@ dependencies:
 - containers
 - mtl
 - clock
+- timeit
+- deepseq
 
 ghc-options:
 - -Wall
