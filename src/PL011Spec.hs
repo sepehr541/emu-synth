@@ -1,58 +1,36 @@
-module PL011Spec
-    (
-      readUARTDR,
-      writeUARTDR
-    ) where
+{-# LANGUAGE LambdaCase #-}
+
+module PL011Spec (
+  PL011State(PL011State, Crash),
+  pushFIFO,
+  popFIFO,
+  Action(Push, Pop),
+  pl011Actions
+  ) where
 
 import Lib
-import PL011Registers
+import Control.Monad.State hiding (state)
 
--- initialState :: State
--- initialState = Map.fromList
---  [
---    (rUARTDR, Map.fromList [
---        ("DATA", Word 0),
---        ("FE", Bit False),
---        ("PE", Bit False),
---        ("BE", Bit False),
---        ("OE", Bit False)
---        ]),
---    (rUARTLCRH, 0),
---    (rUARTRSR, 0),
---    (rUARTDMACR, 0),
---    (rUARTILPR, 0),
---    (rUARTIBRD, 0),
---    (rUARTFBRD, 0),
---    (rUARTIFLS, 0x12),
---    (rUARTCR, 0x300),
---    (rUARTFR, 0)
---  ]
+data PL011State =
+  PL011State [Int]
+  | Crash
+  deriving (Show, Eq)
+
+popFIFO :: State PL011State (Maybe Int)
+popFIFO = get >>= \case
+    Crash -> return Nothing
+    PL011State [] -> put Crash >> return Nothing
+    PL011State (x:xs) -> put (PL011State xs) >> return (Just x)
 
 
-readUARTDR :: HTriple
-readUARTDR = HTriple
-  [
-    -- UART must be enabled
-    assertSingleBit rUARTCR "UARTEN" bit1,
-    -- RX must be enabled
-    assertSingleBit rUARTCR "RXE" bit1
-  ]
-  (Read rUARTDR)
-  [
-    -- FIFO will become empty
-    assertSingleBit rUARTFR "RXFE" (Bit True),
-    -- FIFO will not be full
-    assertSingleBit rUARTFR "RXFF" (Bit False)
-  ]
+pushFIFO :: Int -> State PL011State (Maybe Int)
+pushFIFO value = get >>= \case
+    Crash -> return Nothing
+    PL011State fifo ->
+      case length fifo of
+        32 -> put Crash >> return Nothing
+        -- Synthesizer debugged : (value:fifo) 
+        _ -> put (PL011State (fifo ++ [value])) >> return (Just value)
 
-writeUARTDR :: HTriple
-writeUARTDR = HTriple
- [
-   
- ]
- (Write rUARTDR)
- [
-   
- ]
-
-
+data Action = Push Int | Pop deriving (Show)
+pl011Actions = [Pop, Push 1, Push 2, Push 3]

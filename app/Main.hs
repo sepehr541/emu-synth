@@ -1,6 +1,15 @@
-module Main (main) where
+module Main (
+  main
+  ) where
 
-import Lib
+import PL011Examples (multi1UARTDRExample)
+import Synthesizer (measureMultipleRuns)
 
 main :: IO ()
-main = someFunc
+main = do
+     -- let result = measureExecutionTime 12 multi1UARTDRExample
+     result <- measureMultipleRuns 10 12 multi1UARTDRExample
+     print result
+     return ()
+
+
